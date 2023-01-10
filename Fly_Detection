@@ -1,0 +1,31 @@
+game.DescendantAdded:Connect(function(d)
+   if d.ClassName:find("Body") and plr.Character and d:IsDescendantOf(plr.Character) then
+       
+       local old_idx;
+       local old_nc;
+       
+       old_idx = hookmetamethod(d, "__index", newcclosure(function(self, ...) -- Prevent indexing (checking properties, name, etc)
+           if self == d then
+               local s,e = pcall(old_idx, self, ...)
+               
+               if not s then
+                   return error(e)
+               end
+               return
+           end
+           return old_idx(self, ...)
+       end))
+       
+       old_nc = hookmetamethod(d, "__namecall", newcclosure(function(self, ...) -- Prevent namecalling (functions)
+           if not checkcaller() and self == d then
+               local s,e = pcall(old_nc, self, ...)
+               
+               if not s then
+                   return error(e)
+               end
+               return
+           end
+           return old_nc(self, ...)
+       end))
+   end
+end)
